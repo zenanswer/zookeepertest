@@ -11,10 +11,10 @@ from zkclient import ZKClient
 Barriers_logger = logging.getLogger(__name__)
 
 
-class Barriers(ZKClient):
-    def __init__(self, hosts, root, name, count):
+class ZKBarriers(ZKClient):
+    def __init__(self, hosts, root, count):
         self.root = root
-        self.name = name
+        self.name = 'barriers'
         self.count = count
         self.condition = threading.Condition(threading.RLock())
         ZKClient.__init__(self, hosts)
@@ -75,11 +75,10 @@ if __name__ == '__main__':
 
     util.enable_default_log()
 
-    def threaded_function(name, duration):
-        barriers = Barriers(
+    def threaded_function(duration):
+        barriers = ZKBarriers(
             hosts='127.0.0.1:2181',
-            root='my_barriers_test',
-            name=str(name),
+            root='/my_barriers_test',
             count=2)
         with barriers:
             Barriers_logger.info('Start to compute...')
@@ -88,10 +87,10 @@ if __name__ == '__main__':
         Barriers_logger.info('Done')
 
     Barriers_logger.info('Starting')
-    thread_1 = Thread(target=threaded_function, args=('TA', 5))
+    thread_1 = Thread(target=threaded_function, args=[5])
     thread_1.start()
     Barriers_logger.info('Start thread 1')
-    thread_2 = Thread(target=threaded_function, args=('TB', 10))
+    thread_2 = Thread(target=threaded_function, args=[10])
     thread_2.start()
     Barriers_logger.info('Start thread 2')
     thread_1.join()
