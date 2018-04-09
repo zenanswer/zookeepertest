@@ -1,0 +1,1 @@
+reconfig -add server.4=10.0.3.16:2888:3888:participant;10.0.3.16:2181,server.5=10.0.4.16:2888:3888:participant;10.0.4.16:2181
